@@ -4,8 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { useForm, Controller } from 'react-hook-form'
 import { useEffect, useState } from "react"
+import { useCreateCadastro } from "@/hooks/useCreateCadastro"
 
-interface Inputs {
+export interface NewCadastro {
   ele: string;
   ela: string;
   email: string;
@@ -15,7 +16,7 @@ interface Inputs {
 }
 
 export const Inscricao = () => {
-  const { register, handleSubmit, control, watch } = useForm<Inputs>({
+  const { register, handleSubmit, control, watch } = useForm<NewCadastro>({
     defaultValues: {
       parcelamento: '1'
     }
@@ -32,8 +33,9 @@ export const Inscricao = () => {
     return phone;
   }
 
-  async function onSubmit(data: Inputs) {
-    console.log(data);
+  const { mutateAsync, isLoading } = useCreateCadastro()
+  async function onSubmit(data: NewCadastro) {
+    await mutateAsync(data);
   }
 
   const [visibleParcelamento, setVisibleParcelamento] = useState<boolean>(false)
@@ -129,7 +131,9 @@ export const Inscricao = () => {
               )} />
           </div>
         )}
-        <Button className="mt-3">Fazer minha inscrição</Button>
+        <Button className="mt-3" disabled={isLoading}>
+          {isLoading ? 'Carregando' : 'Fazer minha inscrição'}
+        </Button>
       </form>
     </main >
   )
